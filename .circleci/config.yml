@@ -23,7 +23,7 @@ jobs:
 
       - run:
           name: Run Unit and Integration Tests
-          command: mvn clean verify
+          command: mvn clean verify site
 
       - run:
           name: Collect Test Results (JUnit XML only)
