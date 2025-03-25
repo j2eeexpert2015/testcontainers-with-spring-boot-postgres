@@ -30,7 +30,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Run Maven Integration Tests
-        run: mvn clean verify
+        run: mvn clean verify site
 
       - name: Upload JUnit Test Results
         if: always()
