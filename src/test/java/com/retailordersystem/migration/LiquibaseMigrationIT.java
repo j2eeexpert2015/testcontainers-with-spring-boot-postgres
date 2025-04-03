@@ -27,15 +27,15 @@ import com.retailordersystem.repository.OrderRepository;
 
 
 /**
- * Integration tests specifically for verifying Flyway migrations
+ * Integration tests specifically for verifying Liquibase migrations
  * using Testcontainers.
  */
 @SpringBootTest // Loads the full application context, triggering Flyway migrations
 @Testcontainers
-public class FlywayMigrationIT {
+public class LiquibaseMigrationIT {
 
     private static final Integer TIMEOUT = 120;
-    private static final Logger logger = LoggerFactory.getLogger(FlywayMigrationIT.class);
+    private static final Logger logger = LoggerFactory.getLogger(LiquibaseMigrationIT.class);
 
     @Container
     @ServiceConnection // Automatically configures datasource properties for the container

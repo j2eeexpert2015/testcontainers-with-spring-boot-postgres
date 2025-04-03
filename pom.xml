@@ -61,10 +61,10 @@
 			<version>2.1.0</version>
 		</dependency>
 
-		<!-- Flyway Core -->
+		<!-- Liquibase Core -->
 		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
 		</dependency>
 
 		<!-- Testcontainers -->
