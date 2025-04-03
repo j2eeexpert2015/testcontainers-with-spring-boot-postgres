@@ -17,6 +17,7 @@ This project is a Spring Boot application that provides a RESTful API for managi
 * Spring Boot
 * Spring Data JPA
 * PostgreSQL
+* Flyway
 * Maven
 * JUnit
 * Testcontainers (for integration tests)
