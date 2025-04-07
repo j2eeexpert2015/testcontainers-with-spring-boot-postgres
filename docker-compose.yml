@@ -1,11 +1,11 @@
 services:
-  # PostgreSQL database
-  postgres:
-    image: postgres:16-alpine
-    container_name: retail-postgres
+  mysql-db:
+    image: mysql:8.0
+    container_name: retail-mysql
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=retaildb
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: retaildb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "3306:3306"

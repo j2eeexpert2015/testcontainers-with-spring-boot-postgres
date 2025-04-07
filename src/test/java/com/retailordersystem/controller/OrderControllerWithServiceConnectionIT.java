@@ -1,10 +1,14 @@
 package com.retailordersystem.controller;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.retailordersystem.constants.DockerImageConstants;
-import com.retailordersystem.model.Order;
-import com.retailordersystem.repository.OrderRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.Duration;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -12,26 +16,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import org.testcontainers.utility.DockerImageName;
 
-import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-
-import java.time.Duration;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.retailordersystem.constants.DockerImageConstants;
+import com.retailordersystem.model.Order;
+import com.retailordersystem.repository.OrderRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,25 +51,16 @@ public class OrderControllerWithServiceConnectionIT {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgres =
-            new PostgreSQLContainer<>(DockerImageName.parse(DockerImageConstants.POSTGRES_IMAGE));
+    static MySQLContainer<?> mysql =
+            new MySQLContainer<>(DockerImageName.parse(DockerImageConstants.MYSQL_IMAGE));
 
     @BeforeAll
     static void startContainers() {
-        // Ensure PostgreSQL is running
-        Awaitility.await().atMost(Duration.ofSeconds(TIMEOUT)).until(postgres::isRunning);
+        // Ensure MySQL is running
+        Awaitility.await().atMost(Duration.ofSeconds(TIMEOUT)).until(mysql::isRunning);
         logger.info("PostgreSQL is up and running!");
     }
 
-    /*
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-
-    }
-    */
 
     @Test
     public void shouldCreateOrderAndPublishEvent() throws Exception {
