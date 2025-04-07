@@ -1,3 +1,5 @@
+TRUNCATE TABLE orders RESTART IDENTITY;
+
 INSERT INTO orders (status, description) VALUES
     ('PENDING', 'DUMMY ORDER'),
     ('PENDING', 'DUMMY ORDER');
