@@ -6,11 +6,11 @@ package com.retailordersystem.constants;
  */
 public final class DockerImageConstants {
 
-    
-    
-    // MySQL Docker image
-    public static final String MYSQL_IMAGE = "mysql:8.0";
+    // PostgreSQL Docker image
+    public static final String POSTGRES_IMAGE = "postgres:16-alpine";
 
+    // Kafka Docker image
+    public static final String KAFKA_IMAGE = "confluentinc/cp-kafka:7.6.1";
 
     // Private constructor to prevent instantiation
     private DockerImageConstants() {

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Duration;
 
+import com.retailordersystem.constants.DockerImageConstants;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,14 +22,13 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import org.testcontainers.utility.DockerImageName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.retailordersystem.constants.DockerImageConstants;
 import com.retailordersystem.model.Order;
 import com.retailordersystem.repository.OrderRepository;
 
@@ -51,21 +51,21 @@ public class OrderControllerWithTestContainerIT {
     private ObjectMapper objectMapper;
 
     @Container
-    static MySQLContainer<?> mysql =
-            new MySQLContainer<>(DockerImageName.parse(DockerImageConstants.MYSQL_IMAGE));
+    static PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>(DockerImageName.parse(DockerImageConstants.POSTGRES_IMAGE));
 
     @BeforeAll
     static void startContainers() {
-        // Ensure MYSQL is running
-        Awaitility.await().atMost(Duration.ofSeconds(TIMEOUT)).until(mysql::isRunning);
+        // Ensure PostgreSQL is running
+        Awaitility.await().atMost(Duration.ofSeconds(TIMEOUT)).until(postgres::isRunning);
         logger.info("PostgreSQL is up and running!");
     }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", mysql::getJdbcUrl);
-        registry.add("spring.datasource.username", mysql::getUsername);
-        registry.add("spring.datasource.password", mysql::getPassword);
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
 
     }
 

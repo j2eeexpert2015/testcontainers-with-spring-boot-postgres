@@ -1,0 +1,60 @@
+version: 2.1
+
+executors:
+  maven-java17-executor:
+    docker:
+      - image: cimg/openjdk:17.0  # CircleCI Java 17 Docker image with Maven
+    resource_class: medium
+
+jobs:
+  run-integration-tests:
+    executor: maven-java17-executor
+
+    # These env variables disable optional Testcontainers features
+    environment:
+      TESTCONTAINERS_RYUK_DISABLED: "true"
+      TESTCONTAINERS_CHECKS_DISABLE: "true"
+
+    steps:
+      - checkout  # Checkout the source code from the repository
+
+      - setup_remote_docker:  # Required for Testcontainers to spin up Docker containers
+          docker_layer_caching: true
+
+      - run:
+          name: Run Unit and Integration Tests
+          command: mvn clean verify site
+
+      - run:
+          name: Collect Test Results (JUnit XML only)
+          command: |
+            mkdir -p ~/test-results/junit/
+            # Copy Surefire unit test results
+            find . -type f -regex ".*/target/surefire-reports/.*\.xml" -exec cp {} ~/test-results/junit/ \;
+            # Copy Failsafe integration test results (excluding failsafe-summary.xml)
+            find . -type f -regex ".*/target/failsafe-reports/TEST-.*\.xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+
+      - store_test_results:
+          path: ~/test-results  # Makes test results visible in CircleCI UI
+
+      - store_artifacts:
+          path: ~/test-results  # Persist raw JUnit XML reports as artifacts
+          destination: junit-xml-reports
+
+      - run:
+          name: Save Full HTML Test Reports
+          command: |
+            mkdir -p ~/html-reports/
+            cp -r target/site/* ~/html-reports/
+          when: always
+
+      - store_artifacts:
+          path: ~/html-reports
+          destination: html-test-reports
+
+workflows:
+  version: 2
+  integration-test-workflow:
+    jobs:
+      - run-integration-tests
