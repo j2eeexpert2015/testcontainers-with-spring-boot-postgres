@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="2-truncate-and-insert-initial-orders" author="author1">  <sql>TRUNCATE TABLE orders;</sql>
+        <insert tableName="orders">
+            <column name="status" value="PENDING"/>
+            <column name="description" value="DUMMY ORDER"/>
+        </insert>
+        <insert tableName="orders">
+            <column name="status" value="PENDING"/>
+            <column name="description" value="DUMMY ORDER"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="orders">
+                <where>description = ? AND status = ?</where>
+                <whereParams>
+                    <param value="DUMMY ORDER"/>
+                    <param value="PENDING"/>
+                </whereParams>
+            </delete>
+            </rollback>
+    </changeSet>
+
+</databaseChangeLog>
