@@ -1,0 +1,36 @@
+image: maven:3.9.6-eclipse-temurin-17
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  TESTCONTAINERS_RYUK_DISABLED: "true"
+  TESTCONTAINERS_CHECKS_DISABLE: "true"
+
+cache:
+  paths:
+    - .m2/repository
+
+stages:
+  - test
+
+integration_test:
+  stage: test
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: "tcp://docker:2375/"
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - apt-get update && apt-get install -y docker.io
+    - docker info
+  script:
+    - mvn clean verify site
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/*.xml
+      - target/failsafe-reports/TEST-*.xml
+      - target/site
+    reports:
+      junit:
+        - target/surefire-reports/*.xml
+        - target/failsafe-reports/TEST-*.xml
